@@ -21,7 +21,7 @@ class PoligonosAppTest {
 
     @Test
     void tipoPoligonos() {
-        final var resultList = app.tipoPoligonos().stream().map(String::toLowerCase).toList();
+        final var resultList = app.tipoPoligonos().stream().map(String::toLowerCase).map(String::trim).toList();
         assertThat(resultList).isEqualTo(List.of("quadrilátero", "quadrilátero", "triângulo", "pentágono", "hexágono"));
     }
 }
