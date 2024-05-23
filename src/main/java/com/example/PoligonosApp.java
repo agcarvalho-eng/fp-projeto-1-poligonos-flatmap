@@ -7,8 +7,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
-
+import java.util.stream.IntStream;
+import java.util.stream.Collectors;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -130,7 +133,18 @@ public class PoligonosApp extends Application {
      */
     protected List<String> tipoPoligonos(){
         // TODO Apague esta linha e a próxima e implemente seu código
-        return List.of();
+        // Map para associar o número de pontos ao tipo de polígono desenhado.
+        Map<Integer, String> tipoDePoligono = Map.of(
+                3, "Triângulo",
+                4, "Quadrilátero",
+                5, "Pentágono",
+                6, "Hexágono"
+        );
+        // Montando o List com os nomes dos polígonos formados.
+        return pontosPoligonos.stream()
+            .map(pontos ->
+                tipoDePoligono.getOrDefault(pontos.size(), "Polígono com " + pontos.size() + " lados"))
+            .toList();
     }
 
     /**
@@ -163,9 +177,22 @@ public class PoligonosApp extends Application {
      *
      * @return uma lista contendo o perímetro de cada polígono
      */
-    protected List<Integer> perimetros(){
-        // TODO Apague esta linha e a próxima e implemente seu código
-        return List.of();
+
+    // Classe para calcular o perímetro das figuras geométricas.
+    protected List<Integer> perimetros() {
+        return pontosPoligonos
+                .stream()
+                .map(pontos -> {Point pontoInicial = pontos.get(0);
+                Point pontoFinal = IntStream.range(1, pontos.size())
+                .mapToObj(i -> new Point(pontos.get(i - 1), pontos.get(i)))
+                .reduce(pontoInicial, (p1, p2) -> new Point(p1, p2));
+
+                // Fecha o ciclo do polígono pegando o último ponto.
+                pontoFinal = new Point(pontoFinal, new Point(pontoFinal, pontos.get(0)));
+
+                return (int) pontoFinal.distance();
+                })
+                .collect(Collectors.toList());
     }
 }
 
